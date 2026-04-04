@@ -1,11 +1,11 @@
-pipeline {
+jenkinsfile   -     pipeline {
     agent any
 
     environment {
         AWS_REGION = "us-east-1"
         ECR_REPO = "demo-user-service"
         ECS_CLUSTER = "Dev_cluster_new"
-        ECS_SERVICE = "user-service-new-service-egsptfmt"
+        ECS_SERVICE ="user-service-new-service-egsptfmt"
         IMAGE_TAG = "${BUILD_NUMBER}"
         AWS_ACCOUNT_ID = "526081839178"
         ECR_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}"
@@ -32,7 +32,8 @@ pipeline {
         stage('Login to ECR') {
             steps {
                 sh """
-                aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+                aws ecr get-login-password --region ${AWS_REGION} | \
+                docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
                 """
             }
         }
@@ -50,10 +51,10 @@ pipeline {
             steps {
                 sh """
                 aws ecs update-service \
-                --cluster ${ECS_CLUSTER} \
-                --service ${ECS_SERVICE} \
-                --force-new-deployment \
-                --region ${AWS_REGION}
+                    --cluster ${ECS_CLUSTER} \
+                    --service ${ECS_SERVICE} \
+                    --force-new-deployment \
+                    --region ${AWS_REGION}
                 """
             }
         }
