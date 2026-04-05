@@ -68,7 +68,7 @@ app.post("/register", async (req, res) => {
 
     const [result] = await db.query(
       "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-      [name, email, password]
+      [name.trim(), email.toLowerCase(), hashedpassword]
     );
 
     res.status(201).json({
