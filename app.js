@@ -1,9 +1,8 @@
-app.js -  require("dotenv").config();
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const db = require("./db_mysql");
+const db = require("./db");
 
-console.log("DB IMPORT VALUE:", db); // 🔎 Debug line
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -37,6 +36,20 @@ app.use(express.json());
 
 // ========== ROUTES ==========
 
+// ================= ROOT ROUTE =================
+app.get("/", (req, res) => {
+  res.send("🚀 User Service is running successfully 456");
+});
+
+// ================= HEALTH CHECK =================
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    service: "user-service"
+  });
+});
+
+
 app.get("/users", async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -68,7 +81,7 @@ app.post("/register", async (req, res) => {
 
     const [result] = await db.query(
       "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-      [name.trim(), email.toLowerCase(), password]
+      [name, email, password]
     );
 
     res.status(201).json({
