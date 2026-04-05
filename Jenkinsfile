@@ -6,6 +6,7 @@ pipeline {
         ECR_REPO = "surya-user-service"
         ECS_CLUSTER = "surya-dev-cluster"
         ECS_SERVICE ="user-service-surya-1"
+        TASK_DEF_NAME = "surya-user-service"
         IMAGE_TAG = "${BUILD_NUMBER}"
         AWS_ACCOUNT_ID = "526081839178"
         ECR_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}"
