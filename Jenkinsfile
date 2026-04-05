@@ -5,7 +5,7 @@ pipeline {
         AWS_REGION = "us-east-1"
         ECR_REPO = "surya-user-service"
         ECS_CLUSTER = "surya-dev-cluster"
-        ECS_SERVICE ="user-service-surya-1"
+        ECS_SERVICE ="surya-user-service-2"
         TASK_DEF_NAME = "surya-user-service"
         IMAGE_TAG = "${BUILD_NUMBER}"
         AWS_ACCOUNT_ID = "526081839178"
