@@ -17,6 +17,17 @@ app.use(cors({
 app.use(express.json());
 
 app.use((req, res, next) => {
+  console.log({
+    "req.url"          : req.url,           // /test
+    "req.originalUrl"  : req.originalUrl,   // /test
+    "req.baseUrl"      : req.baseUrl,       // (empty for root)
+    "req.path"         : req.path,          // /test
+    "req.hostname"     : req.hostname,      // surya-alb-xxx.amazonaws.com
+    "req.protocol"     : req.protocol,      // http
+    "req.method"       : req.method,        // GET
+    "req.ip"           : req.ip,            // client IP
+    "fullUrl"          : req.protocol + "://" + req.get("host") + req.originalUrl
+  });
   if (req.url.startsWith("/api/user-service")) {
     req.url = req.url.replace("/api/user-service", "");
   }
