@@ -1,6 +1,105 @@
 require("dotenv").config();
 const express = require("express");
+corequire("dotenv").config();
+const express = require("express");
 const cors = require("cors");
+const db = require("./db");
+
+
+const app = express();
+const PORT = process.env.PORT || 4000;
+
+// ========== CORS ==========
+app.use(cors({
+  origin: "*",
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+app.use(express.json());
+
+app.use((req, res, next) => {
+  if (req.url.startsWith("/api/user-service")) {
+    req.url = req.url.replace("/api/user-service", "");
+  }
+  next();
+});
+
+// ========== DATABASE TEST ==========
+(async () => {
+  try {
+    await db.query("SELECT 1");
+    console.log("✅ MySQL Database connected");
+  } catch (err) {
+    console.error("❌ MySQL connection failed:", err.message);
+  }
+})();
+
+// ========== ROUTES ==========
+
+// ================= ROOT ROUTE =================
+app.get("/", (req, res) => {
+  res.send("🚀 User Service is running successfully 456");
+});
+
+// ================= HEALTH CHECK =================
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    service: "user-service"
+  });
+});
+
+
+app.get("/users", async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      "SELECT id, name, email FROM users"
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error("DB ERROR:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
+app.post("/register", async (req, res) => {
+  const { name, email, password } = req.body;
+
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: "All fields required" });
+  }
+
+  try {
+    const [existing] = await db.query(
+      "SELECT id FROM users WHERE email = ?",
+      [email]
+    );
+
+    if (existing.length > 0) {
+      return res.status(400).json({ error: "User already exists" });
+    }
+
+    const [result] = await db.query(
+      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+      [name, email, password]
+    );
+
+    res.status(201).json({
+      message: "User registered successfully",
+      user: { id: result.insertId, name, email }
+    });
+
+  } catch (err) {
+    console.error("REGISTER ERROR:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
+// ========== START SERVER ==========
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});nst cors = require("cors");
 const db = require("./db");
 
 
